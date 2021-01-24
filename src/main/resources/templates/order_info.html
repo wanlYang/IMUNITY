@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>订单详情</title>
+        <link rel="shortcut icon" th:href="@{/static/images/favicon.ico}">
+        <div th:replace="templates/commons/link::head('/static/css/iconfont.css,/static/css/global.css,'
+            + '/static/css/bootstrap.min.css,/static/css/bootstrap-theme.min.css,/static/css/swiper.min.css,/static/css/styles.css')"></div>
+    </head>
+    <body>
+        <!--顶部-->
+        <div th:replace="templates/commons/top::top"></div>
+        <!-- 顶部标题 -->
+        <div class="bgf5 clearfix">
+            <div class="top-user">
+                <div class="inner">
+                    <a class="logo" th:href="@{/}"><img th:src="@{/static/images/icons/logo.png}" alt="婉碧商城" class="cover"></a>
+                    <div class="title">订单详情</div>
+                </div>
+            </div>
+        </div>
+        <div class="content clearfix bgf5">
+            <section class="user-center inner clearfix">
+                <div class="user-content__box clearfix bgf">
+                    <div class="title">
+                    	<span th:if="${order.status == 1}">订单详情-已支付</span>
+                    	<span th:if="${order.status == 0}">订单详情-确认支付</span>
+                    	<span th:if="${order.status == 3}">订单详情-已发货</span>
+                    	<span th:if="${order.status == 4}">订单详情-已确认</span>
+                    </div>
+                    <div class="shop-title">收货地址</div>
+                    <form method="post" class="shopcart-form__box layui-form">
+                        <input type="hidden" name="orderId" th:value="${order.id}"/>
+                        <div class="addr-radio" th:if="${order.status == 0}">
+                            <div class="layui-form-item" th:each="address,addressStatus:${addresses}">
+                                <div class="layui-input-block">
+                                    <input type="radio" lay-filter="radio" name="address"  th:value="${address.id}"
+                                           th:title="${address.province} +' '+ ${address.city} +' '+ ${address.county} +' '+ ${address.street}+' ('+ ${address.consignee}+' 收) '+ ${address.tel}">
+                                </div>
+                            </div>
+                        </div>
+                        <!--th:checked="${addressStatus.index == 0 ? 'checked' : ''}"-->
+                        <div class="addr-radio" th:if="${order.status >= 1}">
+                        	<div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <blockquote class="site-text layui-elem-quote" style="cursor: default" th:text="${order.address.province} +' '+ ${order.address.city} +' '+ ${order.address.county} +' '+ ${order.address.street}+' ('+ ${order.address.consignee}+' 收) '+ ${order.address.tel}">
+                                    </blockquote>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="add_addr" th:if="${order.status == 0}">
+                        	<a th:href="@{'/order/add/address?backUrl='+${#httpServletRequest.getRequestURL()}}">添加新地址</a>
+                        </div>
+                        <div class="add_addr" th:if="${order.status >= 1}">
+                        	<a href="javascript:void(0)">已使用上面的地址付款</a>
+                        </div>
+                        <div class="shop-title">确认订单</div>
+                        <div class="shop-order__detail">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th width="120"></th>
+                                    <th width="300">商品信息</th>
+                                    <th width="150">单价</th>
+                                    <th width="200">数量</th>
+                                    <th width="200">运费</th>
+                                    <th width="80">总价</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="orderItem:${order.orderItems}">
+                                    <th scope="row"><a th:href="@{'/product/' + ${orderItem.product.id}}"><div class="img"><img th:src="@{'/' + ${orderItem.product.img}}" th:alt="@{${orderItem.product.mainTitle}}" class="cover"></div></a></th>
+                                    <td>
+                                        <div class="name ep3" th:text="${orderItem.product.mainTitle}"></div>
+                                        <div class="type c9" th:text="'所属分类：' + ${orderItem.product.category.title}"></div>
+                                    </td>
+                                    <td th:text="'￥'+${orderItem.product.price}">¥20.0</td>
+                                    <td th:text="${orderItem.number}">1</td>
+                                    <td th:text="'￥0.0'">¥0.0</td>
+                                    <td>
+                                        <div class="layui-btn" th:text="'￥'+${orderItem.number} * ${orderItem.product.price}"></div>
+                                        <a th:if="${order.status == 4}" th:href="@{'/review/' + ${orderItem.product.id}}" class="layui-btn layui-btn-primary" style="margin-top: 20px;margin-right: 10px;">
+                                            去评价
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="shop-cart__info clearfix">
+                            <div class="pull-left text-left" th:if="${order.status == 0}">
+                                <div class="info-line text-nowrap">下单时间：<span class="c6" th:text="${#dates.format(order.createDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">交易类型：<span class="c6">担保交易</span></div>
+                                <div class="info-line text-nowrap">订单号：<span class="c6" th:text="${order.id}"></span></div>
+                            </div>
+                            <div class="pull-left text-left" th:if="${order.status == 1}">
+                                <div class="info-line text-nowrap">下单时间：<span class="c6" th:text="${#dates.format(order.createDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">付款时间：<span class="c6" th:text="${#dates.format(order.payDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">交易类型：<span class="c6">担保交易</span></div>
+                                <div class="info-line text-nowrap">订单号：<span class="c6" th:text="${order.id}"></span></div>
+                            </div>
+                            <div class="pull-left text-left" th:if="${order.status == 3}">
+                                <div class="info-line text-nowrap">下单时间：<span class="c6" th:text="${#dates.format(order.createDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">付款时间：<span class="c6" th:text="${#dates.format(order.payDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">发货时间：<span class="c6" th:text="${#dates.format(order.deliveryDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">交易类型：<span class="c6">担保交易</span></div>
+                                <div class="info-line text-nowrap">订单号：<span class="c6" th:text="${order.id}"></span></div>
+                            </div>
+                            <div class="pull-left text-left" th:if="${order.status == 4}">
+                                <div class="info-line text-nowrap">下单时间：<span class="c6" th:text="${#dates.format(order.createDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">付款时间：<span class="c6" th:text="${#dates.format(order.payDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">发货时间：<span class="c6" th:text="${#dates.format(order.deliveryDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">确认时间：<span class="c6" th:text="${#dates.format(order.confirmDate,'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-line text-nowrap">交易类型：<span class="c6">担保交易</span></div>
+                                <div class="info-line text-nowrap">订单号：<span class="c6" th:text="${order.id}"></span></div>
+                            </div>
+                            <div class="pull-right text-right">
+                                <div class="info-line">运费：<span class="c6">¥0.00</span></div>
+                                <div class="info-line">合计：<b class="fz18 cr" th:text="'￥'+${order.orderTotal}">¥18.0</b></div>
+                            </div>
+                        </div>
+                        <div class="shop-title">确认订单</div>
+                        <div class="pay-mode__box" th:if="${order.status == 0}">
+                            <select name="paymode" lay-verify="required">
+                                <option value="020">余额(<span th:text="'￥'+${account.balance}"></span>)</option>
+                                <option value="010" disabled>支付宝</option>
+                            </select>
+                        </div>
+                        <div class="pay-mode__box" th:if="${order.status >= 1}">
+                            <blockquote class="site-text layui-elem-quote" style="cursor: default" th:text="'已付款'">
+                            </blockquote>
+                        </div>
+                        <div class="user-form-group shopcart-submit" th:if="${order.status == 0}">
+                            <button class="layui-btn layui-disabled" id="pay" disabled lay-submit lay-filter="pay">继续支付<span th:text="'￥'+${order.orderTotal}"></span></button>
+                        </div>
+                        <div class="user-form-group shopcart-submit" th:if="${order.status == 3}">
+                            <button class="layui-btn" lay-submit lay-filter="confirm">确认收货</button>
+                        </div>
+                        <div class="user-form-group shopcart-submit" th:if="${order.status == 4}">
+                            <blockquote class="site-text layui-elem-quote" style="cursor: default" th:text="'订单已完成'">
+                            </blockquote>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+        <div th:replace="templates/commons/foot::foot"></div>
+        <div th:replace="templates/commons/script::script('/static/js/jquery.1.12.4.min.js,/static/js/bootstrap.min.js,/static/js/swiper.min.js,'
+	    +'/static/js/global.js,/static/commons/product/order_info.js')"></div>
+    </body>
+</html>

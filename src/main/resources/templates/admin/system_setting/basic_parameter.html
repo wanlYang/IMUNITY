@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title>系统基本参数--即刻社区后台</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<div th:replace="admin/templates/commons/link::head('/admin/static/css/public.css')"></div>
+</head>
+<body class="childrenBody">
+	<form class="layui-form">
+		<input type="hidden" name="websiteId" class="websiteId">
+		<table class="layui-table mag0">
+			<colgroup>
+				<col width="25%">
+				<col width="45%">
+				<col>
+		    </colgroup>
+		    <thead>
+		    	<tr>
+		    		<th>参数说明</th>
+		    		<th>参数值</th>
+		    		<th pc>变量名</th>
+		    	</tr>
+		    </thead>
+		    <tbody>
+		    	<tr>
+		    		<td>网站名称</td>
+		    		<td><input type="text" class="layui-input cmsName" name="websiteName" lay-verify="required" placeholder="请输入模版名称"></td>
+		    		<td pc>websiteName</td>
+		    	</tr>
+		    	<tr>
+		    		<td>当前版本</td>
+		    		<td><input type="text" class="layui-input version" name="websiteVersion" lay-verify="required" placeholder="请输入当前模版版本"></td>
+		    		<td pc>websiteVersion</td>
+		    	</tr>
+		    	<tr>
+		    		<td>开发作者</td>
+		    		<td><input type="text" class="layui-input author" name="websiteAuthor" lay-verify="required" placeholder="请输入开发作者"></td>
+		    		<td pc>websiteAuthor</td>
+		    	</tr>
+		    	<tr>
+		    		<td>网站首页</td>
+		    		<td><input type="text" class="layui-input homePage" name="websiteHomePage" placeholder="请输入网站首页"></td>
+		    		<td pc>websiteHomePage</td>
+		    	</tr>
+		    	<tr>
+		    		<td>服务器环境</td>
+		    		<td><input type="text" class="layui-input server" lay-verify="required" name="websiteServer" placeholder="请输入服务器环境"></td>
+		    		<td pc>websiteServer</td>
+		    	</tr>
+		    	<tr>
+		    		<td>数据库版本</td>
+		    		<td><input type="text" class="layui-input dataBase"  lay-verify="required" name="websiteDataBase" placeholder="请输入数据库版本"></td>
+		    		<td pc>websiteDataBase</td>
+		    	</tr>
+		    	<tr>
+		    		<td>最大上传限制</td>
+		    		<td><input type="text" class="layui-input maxUpload" lay-verify="required" name="websiteMaxUpload" placeholder="请输入最大上传限制"></td>
+		    		<td pc>websiteMaxUpload</td>
+		    	</tr>
+		    	<tr>
+		    		<td>版权信息</td>
+		    		<td><input type="text" class="layui-input powerby" lay-verify="required" name="websitePowerby" placeholder="请输入网站版权信息"></td>
+		    		<td pc>websitePowerby</td>
+		    	</tr>
+		    	<tr>
+		    		<td>网站描述</td>
+		    		<td><textarea placeholder="请输入网站描述" lay-verify="required" name="websiteDescription" class="layui-textarea description"></textarea></td>
+		    		<td pc>websiteDescription</td>
+		    	</tr>
+		    	<tr>
+		    		<td>网站备案号</td>
+		    		<td><input type="text" class="layui-input record" name="websiteRecord" placeholder="请输入网站备案号"></td>
+		    		<td pc>websiteRecord</td>
+		    	</tr>
+		    </tbody>
+		</table>
+		<div class="magt10 layui-right">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="systemParameter">立即提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		    </div>
+		</div>
+	</form>
+	<div th:replace="admin/templates/commons/script::script('/admin/static/js/cache.js,/admin/static/commons/system_setting/basic_parameter.js')"></div>
+</body>
+</html>

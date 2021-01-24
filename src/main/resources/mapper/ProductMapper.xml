@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.ProductMapper">
+    <insert id="create" parameterType="Product">
+      INSERT INTO esm_product(id,cate_id,main_title,sub_title,price,old_price,buy_count,img,detail,status,is_hot,stock,shelf_time,cate_ids)
+      VALUES (#{id},#{category.id},#{mainTitle},#{subTitle},#{price},#{oldPrice},#{buyCount},#{img},#{detail},#{status},#{isHot},#{stock},#{shelfTime},#{cateIds})
+    </insert>
+    <update id="update" parameterType="product">
+        UPDATE esm_product SET
+          main_title = #{mainTitle},
+          sub_title = #{subTitle},
+          price = #{price},
+          old_price = #{oldPrice},
+          buy_count = #{buyCount},
+          img = #{img},
+          detail = #{detail},
+          is_hot = #{isHot},
+          status = #{status},
+          stock = #{stock},
+          shelf_time = #{shelfTime}
+          WHERE id = #{id}
+    </update>
+    <update id="updates" parameterType="product">
+        UPDATE esm_product SET
+          cate_id = #{category.id},
+          main_title = #{mainTitle},
+          sub_title = #{subTitle},
+          price = #{price},
+          old_price = #{oldPrice},
+          buy_count = #{buyCount},
+          img = #{img},
+          detail = #{detail},
+          is_hot = #{isHot},
+          status = #{status},
+          stock = #{stock},
+          shelf_time = #{shelfTime},
+          cate_ids = #{cateIds}
+          WHERE id = #{id}
+    </update>
+    <update id="del" parameterType="int">
+        UPDATE esm_product SET
+          status = #{status}
+          WHERE id = #{id}
+    </update>
+    <update id="recovery" parameterType="int">
+      UPDATE esm_product SET
+          status = 1
+          WHERE id = #{productId}
+    </update>
+    <select id="findHotProduct" resultMap="productResultMap">
+        SELECT id,cate_id,main_title,sub_title,price,old_price,buy_count,img,detail,`status`,is_hot,stock,shelf_time
+        FROM esm_product
+        WHERE is_hot = 1 AND status = 1
+        ORDER BY RAND() LIMIT 8
+
+    </select>
+    <select id="findProductByCategoryId" resultMap="productResultMap">
+        SELECT id,cate_id,main_title,sub_title,price,old_price,buy_count,img,detail,`status`,is_hot,stock,shelf_time FROM esm_product WHERE cate_id = #{id} AND status = 1
+    </select>
+    <resultMap id="productResultMap" type="product">
+        <id column="id" property="id"/>
+        <result column="main_title" property="mainTitle"/>
+        <result column="sub_title" property="subTitle"/>
+        <result column="price" property="price"/>
+        <result column="old_price" property="oldPrice"/>
+        <result column="buy_count" property="buyCount"/>
+        <result column="img" property="img"/>
+        <result column="detail" property="detail"/>
+        <result column="is_hot" property="isHot"/>
+        <result column="status" property="status"/>
+        <result column="stock" property="stock"/>
+        <result column="shelf_time" property="shelfTime"/>
+        <result column="cate_ids" property="cateIds"></result>
+        <association column="cate_id" property="category" select="com.wanl.mapper.CategoryMapper.findCateById"></association>
+    </resultMap>
+    <resultMap id="productDetailsResultMap" type="product">
+        <id column="id" property="id"/>
+        <result column="main_title" property="mainTitle"/>
+        <result column="sub_title" property="subTitle"/>
+        <result column="price" property="price"/>
+        <result column="old_price" property="oldPrice"/>
+        <result column="buy_count" property="buyCount"/>
+        <result column="img" property="img"/>
+        <result column="detail" property="detail"/>
+        <result column="is_hot" property="isHot"/>
+        <result column="status" property="status"/>
+        <result column="stock" property="stock"/>
+        <result column="shelf_time" property="shelfTime"/>
+        <result column="cate_ids" property="cateIds"></result>
+        <association column="cate_id" property="category" select="com.wanl.mapper.CategoryMapper.findCateById"></association>
+        <collection property="productSingleImages" column="id" select="com.wanl.mapper.ProductImageMapper.findImagesByProductId"></collection>
+    </resultMap>
+    <select id="findProductById" resultMap="productResultMap" parameterType="int">
+        SELECT id,cate_id,main_title,sub_title,price,old_price,buy_count,img,detail,`status`,is_hot,stock,shelf_time FROM esm_product WHERE id = #{id}
+    </select>
+    <select id="findAll" resultMap="productResultMap">
+        SELECT * FROM esm_product LIMIT #{start},#{limit}
+    </select>
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT count(*) FROM esm_product
+    </select>
+    <select id="findAllDetails" resultMap="productDetailsResultMap">
+      SELECT * FROM esm_product LIMIT #{start},#{limit}
+    </select>
+    <select id="findAppletHotProduct" resultMap="productDetailsResultMap">
+        SELECT id,cate_id,main_title,sub_title,price,old_price,buy_count,img,detail,`status`,is_hot,stock,shelf_time
+        FROM esm_product
+        WHERE is_hot = 1 AND status = 1
+        LIMIT #{index},#{limit}
+    </select>
+    <select id="findAppletProductByCategoryId" resultMap="productDetailsResultMap">
+        SELECT id,cate_id,main_title,sub_title,price,old_price,buy_count,img,detail,`status`,is_hot,stock,shelf_time FROM esm_product WHERE cate_id = #{id} AND status = 1 LIMIT #{index},#{limit}
+    </select>
+    <select id="findProductCountByCategory" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM esm_product WHERE cate_id = #{cate_id}
+    </select>
+    <select id="findProductByCategoryIdPage" resultMap="productDetailsResultMap">
+        SELECT * FROM esm_product WHERE cate_id = #{itemId} LIMIT #{start},#{limit}
+    </select>
+    <select id="findAllHelper" resultType="Product">
+        SELECT * FROM esm_product
+    </select>
+</mapper>

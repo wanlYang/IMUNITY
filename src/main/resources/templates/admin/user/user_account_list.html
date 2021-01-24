@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<meta charset="utf-8">
+	<title>用户账户--即刻社区后台</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<div th:replace="admin/templates/commons/link::head('/admin/static/css/public.css')"></div>
+</head>
+<body class="childrenBody">
+<form class="layui-form" onkeydown="if(event.keyCode==13) return false;">
+	<blockquote class="layui-elem-quote">
+		<a class="layui-btn layui-btn-sm addAccount">添加账户</a>
+	</blockquote>
+	<table id="userAccountList" lay-filter="userAccount"></table>
+	<script type="text/html" id="accountListBar" th:inline="javascript" charset="UTF-8">
+		<div sec:authorize="hasRole('ROLE_ADMIN')" >
+			{{# if(checkIsAdmin(d.user.roles)){ }}
+				<a class="layui-btn layui-btn-xs">管理员</a>
+			{{# }else if(checkIsSuperAdmin(d.user.roles)){ }}
+				<a class="layui-btn layui-btn-xs">超级管理员</a>
+			{{# }else{ }}
+				<a class="layui-btn layui-btn-xs">用户</a>
+				{{# if(d.accountStatus == 0){ }}
+					<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="changeStatus" >正常</a>
+				{{# }else if(d.accountStatus == 1){ }}
+					<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="changeStatus">冻结</a>
+				{{# } }}
+			{{# } }}
+		</div>
+		<div sec:authorize="hasRole('ROLE_SUPER_ADMIN')" >
+			{{# if(checkIsSuperAdmin(d.user.roles)){ }}
+				<a class="layui-btn layui-btn-xs">超级管理员</a>
+			{{# }else{ }}
+				{{# if(checkIsAdmin(d.user.roles)){ }}
+					<a class="layui-btn layui-btn-xs">管理员</a>
+				{{# }else{ }}
+					<a class="layui-btn layui-btn-xs">用户</a>
+				{{# } }}
+				{{# if(d.accountStatus == 0){ }}
+					<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="changeStatus" >正常</a>
+				{{# }else if(d.accountStatus == 1){ }}
+					<a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="changeStatus">冻结</a>
+				{{# } }}
+			{{# } }}
+		</div>
+	</script>
+</form>
+<div th:replace="admin/templates/commons/script::script('/admin/static/commons/user/user_account_list.js')"></div>
+</body>
+</html>

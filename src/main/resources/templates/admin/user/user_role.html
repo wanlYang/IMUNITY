@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title>会员等级--即刻社区后台</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<div th:replace="admin/templates/commons/link::head('/admin/static/css/public.css')"></div>
+</head>
+<body class="childrenBody">
+<form class="layui-form" onkeydown="if(event.keyCode==13) return false;">
+	<blockquote class="layui-elem-quote">
+		<a class="layui-btn layui-btn-sm addRole">新增权限</a>
+	</blockquote>
+	<table id="userGrade" lay-filter="userRole"></table>
+	<script type="text/html" id="roleListBar" th:inline="javascript" charset="UTF-8">
+		<a class="layui-btn layui-btn-xs" title="删除" lay-event="del">删除</a>
+	</script>
+</form>
+<div th:replace="admin/templates/commons/script::script('/admin/static/commons/user/user_role.js')"></div>
+</body>
+</html>

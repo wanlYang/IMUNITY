@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.ShopCartMapper">
+    <insert id="addShopCart" parameterType="shopCart">
+        INSERT INTO esm_cart(user_id,product_id,amount) VALUES (#{user.id},#{product.id},#{amount})
+    </insert>
+    <delete id="del">
+        DELETE FROM esm_cart WHERE id = #{id}
+    </delete>
+    <delete id="clear">
+        DELETE FROM esm_cart WHERE user_id = #{id}
+
+    </delete>
+    <select id="getShopCart" resultMap="shopCartResultMap">
+        SELECT * FROM esm_cart WHERE product_id = #{id}
+        
+    </select>
+    <resultMap id="shopCartResultMap" type="shopCart">
+        <id column="id" property="id"></id>
+        <result column="amount" property="amount"></result>
+        <association property="user" column="user_id" select="com.wanl.mapper.EsmUserMapper.findUserById"></association>
+        <association property="product" column="product_id" select="com.wanl.mapper.ProductMapper.findProductById"></association>
+    </resultMap>
+
+    <select id="getShopCartById" resultMap="shopCartResultMap">
+        SELECT * FROM esm_cart WHERE id = #{id}
+
+    </select>
+    <select id="getShopCarts" resultMap="shopCartResultMap">
+        select * FROM esm_cart WHERE user_id = #{id}
+
+    </select>
+    <select id="getShopCartPiece" parameterType="String" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM esm_cart where user_id = #{id}
+    </select>
+    <update id="updateAmount" parameterType="int">
+
+        UPDATE esm_cart SET amount = #{amount} WHERE id = #{id}
+    </update>
+
+</mapper>

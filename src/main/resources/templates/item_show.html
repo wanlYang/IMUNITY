@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" th:href="@{/static/images/favicon.ico}">
+	<div th:replace="templates/commons/link::head('/static/css/iconfont.css,/static/css/global.css,'
+		+ '/static/css/bootstrap.min.css,/static/css/bootstrap-theme.min.css,/static/css/swiper.min.css,/static/css/styles.css,/static/css/normalize.css')"></div>
+	<title th:text="${product.mainTitle}"></title>
+	
+</head>
+<body>
+	<!--顶部-->
+	<div th:replace="templates/commons/top::top"></div>
+	<!-- 搜索栏 -->
+	<div th:replace="templates/commons/search::search"></div>
+	<!-- 内页导航栏 -->
+	<div class="top-nav bg3">
+		<div class="nav-box inner">
+			<div class="all-cat">
+				<div class="title"><i class="iconfont icon-menu"></i> 全部分类</div>
+			</div>
+			<ul class="nva-list">
+				<a th:href="@{/}"><li class="active">首页</li></a>
+			</ul>
+
+		</div>
+	</div>
+	<div class="content inner">
+		<section class="item-show__div item-show__head clearfix">
+			<div class="pull-left">
+				<ol class="breadcrumb">
+					<li><a th:href="@{/}">首页</a></li>
+					<li><a style="cursor: default" href="javascript:void(0)" th:text="${product.category.title}">爆款推荐</a></li>
+					<li class="active" th:text="${product.mainTitle}">名称</li>
+				</ol>
+				<div class="showbot">
+					<div id="showbox">
+						<img th:each="image,imageStatus:${product.productSingleImages}" th:src="@{${image.img}}" width="360" height="360" />
+
+					</div><!--展示图片盒子-->
+					<div id="showsum">
+						<!--展示图片里边-->
+					</div>
+					<p class="showpage">
+						<a href="javascript:void(0);" id="showlast"> < </a>
+						<a href="javascript:void(0);" id="shownext"> > </a>
+					</p>
+				</div>
+				<div class="item-info__box">
+					<div class="item-title">
+						<div class="name ep2" th:text="${product.mainTitle}"></div>
+					</div>
+					<div class="item-price bgf5">
+						<div class="price-box clearfix">
+							<div class="price-panel pull-left">
+								<span style="font-size: 22px;">售价：</span>
+								<span class="price" th:text="${'￥' + product.price}">￥19.20</span> 
+								<s style="margin-left: 10px;"  th:text="${'￥' + product.oldPrice}" class="fz16 c9">￥24.00</s>
+							</div>
+							
+						</div>
+					</div>
+					<ul class="item-ind-panel clearfix">
+						<li class="item-ind-item">
+							<span class="ind-label c9">累计销量</span>
+							<span class="ind-count cr" th:text="${product.buyCount}">0</span>
+						</li>
+						<li class="item-ind-item">
+							<a href=""><span class="ind-label c9">累计评论</span>
+							<span class="ind-count cr" th:text="${product.reviewCount}">0</span></a>
+						</li>
+						
+					</ul>
+					<form class="layui-form">
+						<div class="item-key">
+							<div class="item-amount clearfix bgf5">
+								<div class="item-metatit">数量：</div>
+								<div class="amount-box">
+									<div class="amount-widget">
+										<input type="hidden" id="productId" name="id" th:value="${product.id}">
+										<input class="amount-input" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" id="amount-input" value="1" name="amount" readonly="readonly" maxlength="8" type="text">
+										<div class="amount-btn">
+											<a class="amount-but add"></a>
+											<a class="amount-but sub"></a>
+										</div>
+									</div>
+									<div class="item-stock"><span style="margin-left: 10px;">库存 <b id="Stock" th:text="${product.stock}">0</b> 件</span></div>
+
+								</div>
+							</div>
+							<div class="item-action clearfix bgf5" th:if="${product.status == 1}">
+								<a href="javascript:;" rel="nofollow" lay-submit lay-filter="addCart" data-addfastbuy="true" role="button" class="item-action__basket">
+									<i class="iconfont icon-shopcart"></i> 加入购物车
+								</a>
+							</div>
+							<div class="item-action clearfix bgf5" th:if="${product.status == 0}">
+								<a href="javascript:;" class="item-action__basket">
+									商品异常,可能被删除
+								</a>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="pull-right picked-div">
+				<div class="lace-title">
+					<span class="c6">爆款推荐</span>
+				</div>
+				<div class="swiper-container picked-swiper">
+					<div class="layui-carousel" id="hotProduct">
+						<div class="slice slice_info_box">
+							<div data-loader="circle"></div>
+						</div>
+						<style>
+							.slice_info_box{
+								background: #0aaab6;
+								z-index: 99999;
+							}
+						</style>
+						<div carousel-item id="ProductInfoHotProductBox">
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="item-show__div item-show__body posr clearfix">
+			<div class="item-nav-tabs">
+				<ul class="nav-tabs nav-pills clearfix" role="tablist" id="item-tabs">
+					<li role="presentation" class="active"><a href="#detail" role="tab" data-toggle="tab" aria-controls="detail" aria-expanded="true">商品详情</a></li>
+					<li role="presentation"><a href="#evaluate" role="tab" data-toggle="tab" aria-controls="evaluate">累计评价 <span class="badge" th:text="${product.reviewCount}">0</span></a></li>
+				</ul>
+			</div>
+			<div class="pull-left">
+				<div class="tab-content">
+					<div role="tabpanel" class="tab-pane fade in active" id="detail" aria-labelledby="detail-tab">
+						<div class="item-detail__info clearfix">
+							<div class="record ep" th:each="propertyValue:${propertyValues}"><span th:text="${propertyValue.property.name}"></span>：<span th:text="${propertyValue.value == null ? '暂未定义' : propertyValue.value}"></span></div>
+						</div>
+						<div class="rich-text">
+							<p style="text-align: center;">
+								<div th:text="${product.detail}"></div>
+							</p>
+						</div>
+					</div>
+					<div role="tabpanel" class="tab-pane fade" id="evaluate" aria-labelledby="evaluate-tab">
+						<div class="evaluate-content">
+							<div class="tab-content">
+								<div role="tabpanel" class="tab-pane fade in active" id="all" aria-labelledby="all-tab">
+									<style>
+										.eval-box-null{
+											padding: 50px;
+											text-align: center;
+										}
+									</style>
+									<div th:class="${product.reviewCount == 0 ? 'eval-box-null' : 'eval-box'}" th:if="${product.reviewCount == 0}">暂无评价</div>
+									<div th:class="${product.reviewCount == 0 ? 'eval-box-null' : 'eval-box'}" th:if="${product.reviewCount != 0}" th:each="review:${reviews}">
+										<div class="eval-author">
+											<div class="port">
+												<img th:src="@{${review.user.headImg}}" class="cover b-r50">
+											</div>
+											<div class="name" th:text="${review.user.anonymousName}"></div>
+										</div>
+										<div class="eval-content">
+											<div class="eval-text" th:text="${review.content}">
+
+											</div>
+											<div class="eval-time" th:text="${#dates.format(review.time, 'yyyy-MM-dd HH:mm:ss')}">
+
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+			    </div>
+				<div class="recommends">
+					<div class="lace-title type-2">
+						<span class="cr">相关推荐</span>
+					</div>
+					<div class="layui-carousel" id="ProductInfoHotProduct">
+						<div class="slice slice_recommend_box">
+							<div data-loader="circle"></div>
+						</div>
+						<style>
+							.slice_recommend_box{
+								background: #0aaab6;
+								z-index: 99999;
+							}
+						</style>
+						<div carousel-item id="ProductInfoHotProductBoxFoot">
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+	<script th:inline="javascript">
+
+
+	</script>
+	<!-- 底部信息 -->
+	<div th:replace="templates/commons/foot::foot"></div>
+	<div th:replace="templates/commons/script::script('/static/js/jquery.1.12.4.min.js,/static/js/bootstrap.min.js,/static/js/swiper.min.js,'
+	+'/static/js/global.js,/static/commons/product/item_show.js,/static/js/jquery.zoom.js,/static/js/common.js')"></div>
+</body>
+</html>

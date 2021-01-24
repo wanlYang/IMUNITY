@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.UserOperateLogMapper">
+	<insert id="createLog" parameterType="UserOperateLog">
+		INSERT INTO ic_system_log (
+			log_requestUrl,
+			log_requestMethod,
+			log_ipAddress,
+			log_timeConsuming,
+			log_isAbnormal,
+			log_operator,
+			log_modelName,
+			log_operatingTime
+		)
+		VALUES(
+			#{requestUrl},
+			#{requestMethod},
+			#{ipAddress},
+			#{timeConsuming},
+			#{isAbnormal},
+			#{operator},
+			#{modelName},
+			#{operatingTime}
+		)
+	</insert>
+	<select id="getUserOperateLogList" resultMap="userOperateLogResultMap">
+		SELECT * FROM ic_system_log
+	</select>
+	<select id="getUserOperateLogListByLimit" resultMap="userOperateLogResultMap" parameterType="int">
+		SELECT * FROM ic_system_log limit #{start},#{limit}
+	</select>
+	<resultMap type="UserOperateLog" id="userOperateLogResultMap">
+		<id column="log_id" property="id"/>
+		<result column="log_requestUrl" property="requestUrl"/>
+		<result column="log_requestMethod" property="requestMethod"/>
+		<result column="log_ipAddress" property="ipAddress"/>
+		<result column="log_timeConsuming" property="timeConsuming"/>
+		<result column="log_isAbnormal" property="isAbnormal"/>
+		<result column="log_operator" property="operator"/>
+		<result column="log_modelName" property="modelName"/>
+		<result column="log_operatingTime" property="operatingTime"/>
+	</resultMap>
+	
+	<select id="getLogsCount" resultType="int">
+		SELECT COUNT(*) FROM ic_system_log
+	</select>
+</mapper>

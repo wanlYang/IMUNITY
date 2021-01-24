@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.CategoryMapper">
+    <insert id="add" parameterType="Category">
+      INSERT into esm_cate(parent_id,title,description,display) VALUES (#{parentId},#{title},#{description},#{display})
+    </insert>
+    <update id="update" parameterType="Category">
+      UPDATE esm_cate SET parent_id = #{parentId},title = #{title},description = #{description},display = #{display} WHERE id = #{id}
+    </update>
+    <delete id="del">
+        DELETE FROM esm_cate where id = #{id}
+    </delete>
+    <select id="findAll" resultMap="categoryResultMap">
+      SELECT * FROM esm_cate
+    </select>
+    <resultMap id="categoryResultMap" type="Category">
+        <id column="id" property="id"></id>
+        <result column="parent_id" property="parentId"></result>
+        <result column="title" property="title"></result>
+        <result column="description" property="description"></result>
+        <result column="display" property="display"></result>
+    </resultMap>
+    <select id="findCateById" resultMap="categoryResultMap">
+        SELECT * FROM esm_cate WHERE id = #{id}
+    </select>
+    <select id="findCateByParentId" resultMap="categoryResultMap">
+        SELECT * FROM esm_cate WHERE parent_id = #{cateParentId}
+    </select>
+    <select id="getCount" resultType="int">
+        SELECT COUNT(*) FROM esm_cate
+    </select>
+</mapper>

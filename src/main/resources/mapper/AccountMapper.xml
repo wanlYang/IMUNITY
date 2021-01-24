@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.AccountMapper">
+	<select id="findAccountList" resultMap="accountResultMap">
+		SELECT * from ic_user_account LIMIT #{start},#{limit}
+	</select>
+	<resultMap type="Account" id="accountResultMap">
+		<id column="account_id" property="accountId"/>
+		<result column="account_balance" property="accountBalance"/>
+		<result column="account_status" property="accountStatus"/>
+		<association property="user" column="user_id" select="com.wanl.mapper.UserMapper.getUserById"/>
+	</resultMap>
+	<select id="findAccountCount" resultType="int">
+		SELECT COUNT(account_id) from ic_user_account
+	</select>
+    <select id="getUserByAccountId" resultMap="com.wanl.mapper.UserMapper.userResultMap">
+		SELECT
+			u.*,ir.*
+		FROM
+			ic_user u
+			LEFT JOIN ic_role_user iru ON iru.ic_user_id=u.user_id
+			LEFT JOIN ic_user_account uacc ON uacc.user_id = u.user_id
+			LEFT JOIN ic_role ir ON iru.ic_sys_role_id = ir.id
+		WHERE
+			uacc.account_id = #{id};
+	</select>
+    <delete id="del" parameterType="int">
+		DELETE FROM ic_user_account WHERE user_id=#{id}
+	</delete>
+	<insert id="createAccount" parameterType="User">
+		INSERT INTO ic_user_account(user_id) VALUES(#{id})
+	</insert>
+	<update id="changeStatus">
+		UPDATE ic_user_account SET account_status=#{status} WHERE account_id=#{id}
+	</update>
+
+	<insert id="create" parameterType="EsmAccount">
+      INSERT INTO esm_useraccount(id,user_id,balance) VALUES (#{id},#{user.id},#{balance})
+    </insert>
+	<update id="update" parameterType="EsmAccount">
+        UPDATE esm_useraccount SET balance = #{balance} WHERE id = #{id}
+    </update>
+	<select id="get" resultMap="EsmAccountResultMap">
+        SELECT * FROM esm_useraccount WHERE user_id = #{id}
+    </select>
+	<resultMap id="EsmAccountResultMap" type="EsmAccount">
+		<id column="id" property="id"></id>
+		<result column="balance" property="balance"></result>
+		<association property="user" column="user_id" select="com.wanl.mapper.EsmUserMapper.findUserById"></association>
+	</resultMap>
+</mapper>

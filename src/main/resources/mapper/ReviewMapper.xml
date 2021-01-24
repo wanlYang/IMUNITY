@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.ReviewMapper">
+    <insert id="insert" parameterType="review">
+      INSERT INTO esm_review(user_id,product_id,content,time) values (#{user.id},#{product.id},#{content},#{time})
+    </insert>
+
+    <select id="getCount" resultType="int">
+        SELECT COUNT(*) FROM esm_review WHERE product_id = #{id}
+    </select>
+    <select id="findReviewList" resultMap="reviewResultMap">
+        SELECT * FROM esm_review WHERE product_id = #{id} order by id desc
+    </select>
+
+    <resultMap id="reviewResultMap" type="review">
+        <id column="id" property="id"></id>
+        <result column="content" property="content"></result>
+        <result column="time" property="time"></result>
+        <association property="product" column="product_id" select="com.wanl.mapper.ProductMapper.findProductById"></association>
+        <association property="user" column="user_id" select="com.wanl.mapper.EsmUserMapper.findUserById"></association>
+    </resultMap>
+</mapper>

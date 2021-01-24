@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<title>管理员资料--即刻社区后台</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<div th:replace="admin/templates/commons/link::head('/admin/static/css/public.css')"></div>
+</head>
+<body class="childrenBody">
+<form class="layui-form layui-row layui-form-pane">
+	<div class="layui-col-md3 layui-col-xs12 user_right">
+		<div>
+			<div class="layui-upload-list">
+				<img class="layui-upload-img layui-circle" id="userHeadImg" th:src="@{${ADMIN_REQUEST.headImg}}">
+			</div>
+			<div class="layui-btn" id="editimg">上传头像</div>
+		</div>
+		<div th:if="${ADMIN_OPEN_QQ} != null">
+		<div class="layui-upload-list">
+			<img class="layui-upload-img layui-circle" id="userHeadImgQQOauth" th:src="@{${ADMIN_OPEN_QQ.avatar}}">
+		</div>
+		<div class="layui-btn layui-btn-primary">QQ头像</div>
+	</div>
+	</div>
+	<div class="layui-col-md6 layui-col-xs12">
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户状态</label>
+			<div class="layui-input-block">
+				<input type="hidden" name="id" th:value="${ADMIN_REQUEST.id}">
+				<input type="text" id="status" readonly="readonly" th:value="${ADMIN_REQUEST.status == 1 ? '正常' : '限制'}" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户名</label>
+			<div class="layui-input-block">
+				<input type="text" id="username" readonly="readonly" th:value="${ADMIN_REQUEST.username}" class="layui-input">
+			</div>
+		</div>
+		<div th:if="${ADMIN_OPEN_QQ} != null" class="layui-form-item">
+			<label class="layui-form-label">QQ昵称</label>
+			<div class="layui-input-block">
+				<input type="text" id="QQOauthNickname" readonly="readonly" th:value="${ADMIN_OPEN_QQ.nickname}" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item" pane>
+			<label class="layui-form-label">用户权限</label>
+			<div class="layui-input-block roles">
+				<div th:each="role:${ADMIN_REQUEST.roles}"  class="layui-unselect layui-form-checkbox layui-form-checked">
+					<span th:text="*{role.name}">ROLE_ADMIN</span><i class="layui-icon layui-icon-ok"></i>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">绑定邮箱</label>
+			<div class="layui-input-block">
+				<input type="text" id="bindemail" name="bindemail" lay-verify="required|email" th:value="${ADMIN_REQUEST.bindemail}" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item" pane>
+			<label class="layui-form-label">性别</label>
+			<div class="layui-input-block" id="sex">
+				<input type="radio" name="sex" value="male" title="男" th:field="*{ADMIN_REQUEST.sex}">
+				<input type="radio" name="sex" value="female" title="女" th:field="*{ADMIN_REQUEST.sex}">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">年龄</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" name="age" id="age" lay-verify="required|number" th:value="${ADMIN_REQUEST.age}" >
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">手机号码</label>
+			<div class="layui-input-block">
+				<input type="tel" class="layui-input" id="phone" name="phone" lay-verify="required|phone|number" th:value="${ADMIN_REQUEST.phone}">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">出生年月</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" id="birthday" name="birthday" lay-verify="birthday" th:value="${#dates.format(ADMIN_REQUEST.birthday,'yyyy-MM-dd')}">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">注册日期</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" id="registDate" readonly="readonly" th:value="${#dates.format(ADMIN_REQUEST.regDate,'yyyy-MM-dd')}">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">个人简介</label>
+			<div class="layui-input-block">
+				<textarea class="layui-textarea" name="profile" lay-verify="required" th:text="${ADMIN_REQUEST.profile}" id="profile"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit="" lay-filter="changeAdmin">立即提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</div>
+</form>
+<div th:replace="admin/templates/commons/script::script('/admin/static/commons/admin/admin_info.js')"></div>
+</body>
+</html>

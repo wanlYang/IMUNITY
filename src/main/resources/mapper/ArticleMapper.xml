@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.ArticleMapper">
+	<insert id="create" parameterType="Article">
+		INSERT INTO ic_community_topic(user_id,topic_replyCount,topic_title,topic_contents,topic_time,topic_clickCount,topic_flag,topic_lastReplyUserId,topic_lastReplyTime,topic_theme_id,topic_thumbnail,topic_isTop)
+		VALUES(#{user.id},#{replyCount},#{title},#{contents},#{time},#{clickCount},#{flag},#{lastReplyUser.id},#{lastReplyTime},#{theme.themeId},#{thumbnail},#{isTop})
+	</insert>
+	<select id="findList" parameterType="int" resultMap="articleResultMap">
+		SELECT * FROM ic_community_topic LIMIT #{start},#{limit}
+	</select>
+	<resultMap type="Article" id="articleResultMap">
+		<id column="topic_id" property="id"/>
+		<result column="topic_replyCount" property="replyCount"/>
+		<result column="topic_title" property="title"/>
+		<result column="topic_contents" property="contents"/>
+		<result column="topic_time" property="time"/>
+		<result column="topic_clickCount" property="clickCount"/>
+		<result column="topic_flag" property="flag"/>
+		<result column="topic_lastReplyTime" property="lastReplyTime"/>
+		<result column="topic_thumbnail" property="thumbnail"/>
+		<result column="topic_isTop" property="isTop"/>
+		<association property="theme" column="topic_theme_id" select="com.wanl.mapper.CommunityThemeMapper.findThemeById"></association>
+		<association property="lastReplyUser" column="topic_lastReplyUserId" select="com.wanl.mapper.UserMapper.getUserById"></association>
+		<association property="user" column="user_id" select="com.wanl.mapper.UserMapper.getUserById"></association>
+	</resultMap>
+	<select id="getCount" resultType="int">
+		SELECT count(*) FROM ic_community_topic
+	</select>
+	
+	<update id="update" parameterType="Article">
+		UPDATE ic_community_topic
+		<set>
+			<if test="title != null">topic_title=#{title},</if>
+			<if test="contents != null">topic_contents=#{contents},</if>
+			<if test="flag != null">topic_flag=#{flag},</if>
+			<if test="theme != null">topic_theme_id=#{theme.themeId},</if>
+			<if test="thumbnail != null">topic_thumbnail=#{thumbnail},</if>
+			<if test="isTop != null">topic_isTop=#{isTop}</if>
+		</set>
+		WHERE topic_id = #{id}
+	</update>
+	
+	<delete id="del" parameterType="int">
+		DELETE FROM ic_community_topic WHERE topic_id = #{id}
+	</delete>
+	
+	<update id="updateTop" parameterType="int">
+		UPDATE ic_community_topic
+		<set>
+			<if test="value != null">topic_isTop=#{value}</if>
+		</set>
+		WHERE topic_id = #{id}
+	</update>
+	
+	<select id="getArticle" parameterType="int" resultMap="articleResultMap">
+		SELECT * FROM ic_community_topic WHERE topic_id = #{id}
+	</select>
+</mapper>

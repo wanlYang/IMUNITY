@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.UserMapper">
+    <insert id="createUser" parameterType="User" useGeneratedKeys="true" keyProperty="id" keyColumn="user_id">
+		INSERT INTO ic_user(
+			user_name,
+			user_password,
+			user_bindemail,
+			user_age,
+			user_sex,
+			user_birthday,
+			user_phone,
+			user_headImg,
+			user_regDate,
+			user_profile,
+			user_status
+		) VALUES(
+			#{username},
+			#{password},
+			#{bindemail},
+			#{age},
+			#{sex},
+			#{birthday},
+			#{phone},
+			#{headImg},
+			#{regDate},
+			#{profile},
+			#{status}
+		)
+	</insert>
+    <resultMap type="User" id="userResultMap">
+        <id column="user_id" property="id"/>
+        <result column="user_name" property="username"/>
+        <result column="user_password" property="password"/>
+        <result column="user_bindemail" property="bindemail"/>
+        <result column="user_age" property="age"/>
+        <result column="user_sex" property="sex"/>
+        <result column="user_birthday" property="birthday"/>
+        <result column="user_phone" property="phone"/>
+        <result column="user_headImg" property="headImg"/>
+        <result column="user_regDate" property="regDate"/>
+        <result column="user_profile" property="profile"/>
+        <result column="user_status" property="status"/>
+        <collection property="roles" ofType="Role">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </collection>
+    </resultMap>
+    <select id="findByUserName" parameterType="String" resultMap="userResultMap">
+		SELECT
+		u.*, ir.*
+		FROM
+		ic_user u
+		LEFT JOIN ic_role_user iru ON u.user_id = iru.ic_user_id
+		LEFT JOIN ic_role ir ON iru.ic_sys_role_id = ir.id
+		WHERE user_name = #{username}
+	</select>
+    <select id="findAllUserList" resultMap="userResultMap">
+		SELECT
+		u.*, ir.*
+		FROM
+		ic_user u
+		LEFT JOIN ic_role_user iru ON u.user_id = iru.ic_user_id
+		LEFT JOIN ic_role ir ON iru.ic_sys_role_id = ir.id
+	</select>
+    <select id="findAllUserListByPageAndKey" resultMap="userResultMap">
+        SELECT
+        u.*, ir.*
+        FROM
+        ic_user u
+        LEFT JOIN ic_role_user iru ON u.user_id = iru.ic_user_id
+        LEFT JOIN ic_role ir ON iru.ic_sys_role_id = ir.id
+        <where>
+            <if test="arg2.keyWord != null and arg2.keyType == 'user_id'">
+                AND user_id like CONCAT('%','${arg2.keyWord}','%')
+            </if>
+            <if test="arg2.keyWord != null and arg2.keyType == 'user_name'">
+                AND user_name like CONCAT('%','${arg2.keyWord}','%')
+            </if>
+            <if test="arg2.keyWord != null and arg2.keyType == 'user_age'">
+                AND user_age like CONCAT('%','${arg2.keyWord}','%')
+            </if>
+            <if test="arg2.keyWord != null and arg2.keyType == 'user_sex'">
+                AND user_sex=#{arg2.keyWord}
+            </if>
+            <if test="arg2.keyWord != null and arg2.keyType == 'user_profile'">
+                AND user_profile like CONCAT('%','${arg2.keyWord}','%')
+            </if>
+        </where>
+        LIMIT #{start},#{limit}
+    </select>
+    <select id="getUserCountByParam" resultType="int" parameterType="UserQueryParam">
+        SELECT
+        count(*)
+        FROM
+        ic_user
+        <where>
+            <if test="keyWord != null and keyType == 'user_id'">
+                AND user_id like CONCAT('%','${keyWord}','%')
+            </if>
+            <if test="keyWord != null and keyType == 'user_name'">
+                AND user_name like CONCAT('%','${keyWord}','%')
+            </if>
+            <if test="keyWord != null and keyType == 'user_age'">
+                AND user_age like CONCAT('%','${keyWord}','%')
+            </if>
+            <if test="keyWord != null and keyType == 'user_sex'">
+                AND user_sex=#{keyWord}
+            </if>
+            <if test="keyWord != null and keyType == 'user_profile'">
+                AND user_profile like CONCAT('%','${keyWord}','%')
+            </if>
+        </where>
+    </select>
+    <select id="findAllUserListByPage" resultMap="userResultMap">
+		SELECT
+		u.*, ir.*
+		FROM
+		ic_user u
+		LEFT JOIN ic_role_user iru ON u.user_id = iru.ic_user_id
+		LEFT JOIN ic_role ir ON iru.ic_sys_role_id = ir.id
+		LIMIT #{start},#{limit}
+	</select>
+    <select id="getUserCount" resultType="int">
+		SELECT count(*) FROM ic_user
+	</select>
+    <select id="getUserById" resultMap="userResultMap" parameterType="int">
+		SELECT
+			u.*, ir.*
+		FROM
+			ic_user u
+		LEFT JOIN ic_role_user iru ON u.user_id = iru.ic_user_id
+		LEFT JOIN ic_role ir ON iru.ic_sys_role_id = ir.id
+		WHERE
+			u.user_id = #{id}
+	</select>
+    <update id="usableUser">
+		UPDATE ic_user SET user_status=#{status} WHERE user_id=#{id}
+	</update>
+    <delete id="deleteUser" parameterType="int">
+		DELETE FROM ic_user WHERE user_id=#{id}
+	</delete>
+    <update id="updateUser" parameterType="User">
+        UPDATE ic_user
+        <set>
+            <if test="bindemail != null">user_bindemail=#{bindemail},</if>
+            <if test="age != null">user_age=#{age},</if>
+            <if test="sex != null">user_sex=#{sex},</if>
+            <if test="birthday != null">user_birthday=#{birthday},</if>
+            <if test="phone != null">user_phone=#{phone},</if>
+            <if test="profile != null">user_profile=#{profile}</if>
+        </set>
+        WHERE user_id=#{id}
+    </update>
+    <update id="updateHeadImg">
+        UPDATE ic_user
+        <set>
+            <if test="fileUrl != null">user_headImg=#{fileUrl}</if>
+        </set>
+        WHERE user_id=#{id}
+    </update>
+    <select id="findCountByUsername" resultType="int">
+		SELECT COUNT(user_name) FROM ic_user WHERE user_name=#{username}
+	</select>
+    <select id="findCountByEmail" resultType="int">
+		SELECT COUNT(user_bindemail) FROM ic_user WHERE user_bindemail=#{email}
+	</select>
+    <select id="findUserByOpenId" resultMap="userResultMap" parameterType="string">
+		SELECT
+			u.*,ir.*
+		FROM
+			ic_user u
+			LEFT JOIN ic_user_open uopen ON uopen.ic_user_id = u.user_id
+			LEFT JOIN ic_role_user iru ON iru.ic_user_id=u.user_id
+			LEFT JOIN ic_role ir ON iru.ic_sys_role_id = ir.id
+		WHERE
+			uopen.open_id = #{openId} AND uopen.open_type = #{openType};
+	</select>
+    <insert id="createOpenUser" parameterType="OpenUser">
+		INSERT INTO ic_user_open ( ic_user_id, open_id, open_type, nickname, avatar )
+		VALUES(#{user.id},#{openId},#{openType},#{nickname},#{avatar})
+	</insert>
+
+    <select id="getOpenUserById" parameterType="string" resultMap="openUserResultMap">
+		SELECT
+			*
+		FROM
+			ic_user_open
+		WHERE
+			ic_user_id = #{userId} AND open_type = #{openType}
+	</select>
+    <resultMap id="openUserResultMap" type="OpenUser">
+        <id column="id" property="id"></id>
+        <result column="open_id" property="openId"></result>
+        <result property="openType" column="open_type"></result>
+        <result column="nickname" property="nickname"></result>
+        <result property="avatar" column="avatar"></result>
+        <association property="user" column="ic_user_id"
+                     select="getUserById"></association>
+    </resultMap>
+    <delete id="cancelOpenUser">
+        DELETE
+        FROM
+            ic_user_open
+        WHERE
+            ic_user_id=#{id} AND open_type=#{openType}
+    </delete>
+    <select id="findOpenUserByOpenIdAndUserId" resultMap="openUserResultMap">
+        SELECT
+            *
+        FROM
+            ic_user_open
+        WHERE
+            ic_user_id = #{id}
+            AND open_id = #{openId}
+            AND open_type= #{openType}
+    </select>
+    <select id="findOpenUserByUserId" resultMap="openUserResultMap">
+        SELECT
+            *
+        FROM
+            ic_user_open
+        WHERE
+            ic_user_id = #{id}
+            AND open_type= #{openType}
+    </select>
+    <update id="updateOpenUserByUidAndOpenId" parameterType="OpenUser">
+        UPDATE ic_user_open
+        <set>
+            <if test="nickname != null">nickname=#{nickname},</if>
+            <if test="avatar != null">avatar=#{avatar},</if>
+        </set>
+        WHERE open_id=#{openId} AND ic_user_id=#{user.id} AND open_type=#{openType}
+    </update>
+    <select id="findOpenUserByOpenId" resultMap="openUserResultMap">
+        SELECT
+            *
+        FROM
+            ic_user_open
+        WHERE
+            open_id = #{openId}
+            AND open_type= #{openType}
+    </select>
+    <update id="updatePassword">
+        UPDATE ic_user
+        <set>
+            <if test="newPass != null">user_password=#{newPass}</if>
+        </set>
+        WHERE user_id=#{id}
+    </update>
+</mapper>

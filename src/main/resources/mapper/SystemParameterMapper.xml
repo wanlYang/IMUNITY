@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.SystemParameterMapper">
+	<insert id="createSystemParameter" parameterType="SystemParameter">
+		INSERT INTO ic_system_param (
+			website_name,
+			website_version,
+			website_author,
+			website_homePage,
+			website_server,
+			website_dataBase,
+			website_maxUpload,
+			website_powerby,
+			website_description,
+			website_record
+		)
+		VALUES(
+			#{websiteName},
+			#{websiteVersion},
+			#{websiteAuthor},
+			#{websiteHomePage},
+			#{websiteServer},
+			#{websiteDataBase},
+			#{websiteMaxUpload},
+			#{websitePowerby},
+			#{websiteDescription},
+			#{websiteRecord}
+		)
+	</insert>
+	<update id="updateSystemParameter" parameterType="SystemParameter">
+		UPDATE 
+			ic_system_param 
+		<set>
+			<if test="websiteName != null">website_name=#{websiteName},</if>
+			<if test="websiteVersion != null">website_version=#{websiteVersion},</if>
+			<if test="websiteAuthor != null">website_author=#{websiteAuthor},</if>
+			<if test="websiteHomePage != null">website_homePage=#{websiteHomePage},</if>
+			<if test="websiteServer != null">website_server=#{websiteServer},</if>
+			<if test="websiteDataBase != null">website_dataBase=#{websiteDataBase},</if>
+			<if test="websiteMaxUpload != null">website_maxUpload=#{websiteMaxUpload},</if>
+			<if test="websitePowerby != null">website_powerby=#{websitePowerby},</if>
+			<if test="websiteDescription != null">website_description=#{websiteDescription},</if>
+			<if test="websiteRecord != null">website_record=#{websiteRecord}</if>
+		</set>
+		WHERE 
+			website_id=#{websiteId}
+	</update>
+	<resultMap type="SystemParameter" id="systemParameterResultMap">
+		<id column="website_id" property="websiteId"/>
+		<result column="website_name" property="websiteName"/>
+		<result column="website_version" property="websiteVersion"/>
+		<result column="website_author" property="websiteAuthor"/>
+		<result column="website_homePage" property="websiteHomePage"/>
+		<result column="website_server" property="websiteServer"/>
+		<result column="website_dataBase" property="websiteDataBase"/>
+		<result column="website_maxUpload" property="websiteMaxUpload"/>
+		<result column="website_powerby" property="websitePowerby"/>
+		<result column="website_description" property="websiteDescription"/>
+		<result column="website_record" property="websiteRecord"/>
+	</resultMap>
+	<select id="getSystemParameter" resultMap="systemParameterResultMap">
+		SELECT 
+			website_id,
+			website_name,
+			website_version,
+			website_author,
+			website_homePage,
+			website_server,
+			website_dataBase,
+			website_maxUpload,
+			website_powerby,
+			website_description,
+			website_record
+		FROM
+			ic_system_param
+	</select>
+</mapper>

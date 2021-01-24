@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.RoleUserMapper">
+	<insert id="insertRoleUser" parameterType="RoleUser">
+		INSERT INTO 
+		ic_role_user(
+			ic_user_id,
+			ic_sys_role_id
+		) VALUES(
+			#{user.id},
+			#{role.id}
+		)
+	</insert>
+	<delete id="deleteRoleUserById" parameterType="int">
+		DELETE FROM ic_role_user WHERE id=#{id}
+	</delete>
+	<delete id="deleteRoleUserByUserId" parameterType="int">
+		DELETE FROM ic_role_user WHERE ic_user_id=#{id}
+	</delete>
+	<select id="getRoleUserByUserId" resultMap="roleUserResultMap" parameterType="int">
+		SELECT * FROM ic_role_user WHERE ic_user_id=#{id}
+	</select>
+	<select id="getRoleUserByUserIdRoleId" resultMap="roleUserResultMap" parameterType="int">
+		SELECT * FROM ic_role_user WHERE ic_user_id=#{userId} AND ic_sys_role_id=#{roleId}
+	</select>
+	<resultMap type="RoleUser" id="roleUserResultMap">
+		<id column="id" property="id"/>
+		<association property="user" resultMap="com.wanl.mapper.UserMapper.userResultMap" javaType="User">
+		</association>
+		<association property="role" resultMap="com.wanl.mapper.RoleMapper.roleResultMap" javaType="Role">
+		</association>
+	</resultMap>
+	<select id="getRoleUserCount" parameterType="int" resultType="int">
+		SELECT COUNT(ru.ic_sys_role_id) FROM ic_role_user ru WHERE ru.ic_sys_role_id=#{id}
+	</select>
+</mapper>

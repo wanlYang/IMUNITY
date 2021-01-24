@@ -1,0 +1,63 @@
+server:
+  port: 81
+#配置spring
+spring:
+  #多数据源配置
+  datasource:
+    developmentdatasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/imunity_development?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8
+      username: root
+      password:
+    configdatasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/imunity_config?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8
+      username: root
+      password:
+    type: org.apache.commons.dbcp2.BasicDataSource
+
+  #thymeleaf
+  thymeleaf:
+    prefix: classpath:/templates/
+    check-template-location: false  #check-tempate-location: 检查模板路径是否存在
+    cache: false  #cache: 是否缓存，开发模式下设置为false，避免改了模板还要重启服务器，线上设置为true，可以提高性能。
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML5
+  mvc:
+    static-path-pattern: /static/**
+  #文件上传
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  #redis配置
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    timeout: 1000
+    password:
+    jedis:
+      pool:
+        max-idle: 100
+        max-active: 300
+        max-wait: 10
+        min-idle: 2
+    database: 3
+
+#mybatis配置
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl
+  type-aliases-package: com.wanl.entity
+#日志配置
+logging:
+  level:
+    com.kaikeba.express.dao: debug
+
+
+
+
+
+

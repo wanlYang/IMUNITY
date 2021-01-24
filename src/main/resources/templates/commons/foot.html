@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- 底部信息 -->
+<div class="footer" th:fragment="foot">
+    <div class="footer-tags">
+        <div class="tags-box inner">
+            <div class="tag-div">
+                <img th:src="@{/static/images/icons/footer_1.gif}" alt="厂家直供">
+            </div>
+            <div class="tag-div">
+                <img th:src="@{/static/images/icons/footer_2.gif}" alt="一件代发">
+            </div>
+            <div class="tag-div">
+                <img th:src="@{/static/images/icons/footer_3.gif}" alt="美工活动支持">
+            </div>
+            <div class="tag-div">
+                <img th:src="@{/static/images/icons/footer_4.gif}" alt="信誉认证">
+            </div>
+        </div>
+    </div>
+    <div class="copy-box clearfix">
+        <!-- 版权 -->
+        <p class="copyright">
+            © 2018-2019 婉碧商城 版权所有，并保留所有权利<br>
+            ICP备案证书号：陕ICP备18022048号&nbsp;&nbsp;&nbsp;&nbsp;陕西省西安市&nbsp;&nbsp;&nbsp;&nbsp;Tel: 18802927580&nbsp;&nbsp;&nbsp;&nbsp;E-mail: 344295704@qq.com
+            <br>
+            <a style="display: block;" th:href="@{/admin/login}">后台管理</a>
+        </p>
+    </div>
+</div>
+
+</html>

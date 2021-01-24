@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.OrderMapper">
+
+
+    <insert id="create" parameterType="order">
+
+        INSERT INTO esm_order(id,user_id,create_date,pay_date,delivery_date,confirm_date,status,ordertotal,address_id)
+        VALUES (#{id},#{user.id},#{createDate},#{payDate},#{deliveryDate},#{confirmDate},#{status},#{orderTotal},#{address.id})
+
+    </insert>
+    <insert id="createOrderItem" parameterType="orderItem">
+        INSERT INTO esm_orderitem(product_id,order_id,user_id,number) values (#{product.id},#{order.id},#{user.id},#{number})
+    </insert>
+    <insert id="createAddress" parameterType="Address">
+        INSERT INTO esm_address(consignee,province,city,county,street,tel,postcode,user_id)
+        VALUES (#{consignee},#{province},#{city},#{county},#{street},#{tel},#{postcode},#{user.id})
+    </insert>
+    <update id="update" parameterType="order">
+        UPDATE esm_order SET status = #{status},address_id = #{address.id},pay_date = #{payDate},delivery_date = #{deliveryDate},confirm_date = #{confirmDate} WHERE id = #{id}
+    </update>
+    <delete id="delOrderItem">
+        DELETE FROM esm_orderitem WHERE id = #{id}
+    </delete>
+    <delete id="del">
+        DELETE FROM esm_order WHERE id = #{id}
+    </delete>
+    <select id="getOrder" resultMap="orderResultMap">
+        SELECT * FROM esm_order where id = #{id}
+    </select>
+    <select id="getAddress" resultMap="addressResultMap">
+        SELECT * FROM esm_address WHERE id = #{id}
+    </select>
+    <select id="getOrderItem" resultMap="orderItemResultMap">
+        SELECT * FROM esm_orderitem WHERE order_id = #{id}
+    </select>
+    <select id="getAddressList" resultMap="addressResultMap">
+        SELECT * FROM esm_address WHERE user_id = #{id}
+    </select>
+    <select id="getOrderList" resultMap="orderResultMap">
+        SELECT * FROM esm_order where user_id = #{id}
+    </select>
+    <resultMap id="orderItemResultMap" type="orderItem">
+        <id column="id" property="id"></id>
+        <result column="number" property="number"></result>
+        <association property="user" column="user_id" select="com.wanl.mapper.EsmUserMapper.findUserById"></association>
+        <association property="order" column="order_id" select="com.wanl.mapper.OrderMapper.getOrder"></association>
+        <association property="product" column="product_id" select="com.wanl.mapper.ProductMapper.findProductById"></association>
+    </resultMap>
+    <resultMap id="orderResultMap" type="order">
+        <id column="id" property="id"></id>
+        <result column="create_date" property="createDate"></result>
+        <result column="pay_date" property="payDate"></result>
+        <result column="delivery_date" property="deliveryDate"></result>
+        <result column="confirm_date" property="confirmDate"></result>
+        <result column="status" property="status"></result>
+        <result column="ordertotal" property="orderTotal"></result>
+        <association property="user" column="user_id" select="com.wanl.mapper.EsmUserMapper.findUserById"></association>
+        <association property="address" column="address_id" select="com.wanl.mapper.OrderMapper.getAddress"></association>
+    </resultMap>
+    <resultMap id="addressResultMap" type="address">
+        <id column="id" property="id"></id>
+        <result column="consignee" property="consignee"></result>
+        <result column="province" property="province"></result>
+        <result column="city" property="city"></result>
+        <result column="county" property="county"></result>
+        <result column="street" property="street"></result>
+        <result column="tel" property="tel"></result>
+        <result column="postcode" property="postcode"></result>
+        <association property="user" column="user_id" select="com.wanl.mapper.EsmUserMapper.findUserById"></association>
+    </resultMap>
+</mapper>

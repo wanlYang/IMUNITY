@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wanl.mapper.BackStageNavMapper">
+	<select id="getTopLevel" parameterType="int" resultMap="BackStageNavResultMap">
+		SELECT * FROM admin_nav WHERE nav_parent_id = #{level}
+	</select>
+	<resultMap type="BackStageNav" id="BackStageNavResultMap">
+		<id column="nav_id" property="navId"/>
+		<result column="nav_title" property="title"/>
+		<result column="nav_url" property="href"/>
+		<result column="nav_index" property="index"/>
+		<result column="nav_parent_id" property="parentId"/>
+		<result column="is_target" property="target"/>
+		<result column="nav_icon" property="icon"/>
+		<result column="nav_spread" property="spread" javaType="boolean"/>
+		<result column="nav_role" property="rolesString"/>
+	</resultMap>
+	<select id="getSecondLevel" parameterType="int" resultMap="BackStageNavResultMap">
+		SELECT * FROM admin_nav WHERE nav_parent_id = #{topLevelId}
+	</select>
+	<select id="getNav" parameterType="int" resultMap="BackStageNavResultMap">
+		SELECT * FROM admin_nav WHERE nav_parent_id = #{id}
+	</select>
+	<select id="findAllNav" parameterType="int" resultMap="BackStageNavResultMap">
+		SELECT * FROM admin_nav LIMIT #{start},#{limit}
+	</select>
+	<select id="findAll" resultMap="BackStageNavResultMap">
+		SELECT * FROM admin_nav
+	</select>
+	<select id="findNavCount" resultType="int">
+		SELECT count(nav_id) FROM admin_nav
+	</select>
+	<insert id="createNav" parameterType="BackStageNav">
+		INSERT INTO admin_nav(nav_parent_id,nav_title,nav_url,nav_index,is_target,nav_icon,nav_spread,nav_role)
+		VALUES(#{parentId},#{title},#{href},#{index},#{target},#{icon},#{spread},#{rolesString})
+	</insert>
+	<select id="findNavById" parameterType="int" resultMap="BackStageNavResultMap">
+		SELECT * FROM admin_nav where nav_id = #{id}
+	</select>
+	<delete id="delete" parameterType="int">
+		DELETE FROM admin_nav WHERE nav_id = #{id}
+	</delete>
+	<update id="updateNav" parameterType="BackStageNav">
+		UPDATE admin_nav
+        <set>
+            <if test="parentId != null">nav_parent_id=#{parentId},</if>
+            <if test="title != null">nav_title=#{title},</if>
+            <if test="href != null">nav_url=#{href},</if>
+            <if test="index != null">nav_index=#{index},</if>
+            <if test="target != null">is_target=#{target},</if>
+            <if test="icon != null">nav_icon=#{icon},</if>
+            <if test="spread != null">nav_spread=#{spread},</if>
+            <if test="rolesString != null">nav_role=#{rolesString}</if>
+        </set>
+        WHERE nav_id=#{navId}
+	</update>
+	
+	<select id="findAllNavPermission" resultMap="PermissionResultMap">
+		SELECT
+			p.*, ir.*
+		FROM
+			ic_permission p
+		LEFT JOIN ic_role_permission irp ON p.perm_id = irp.ic_perm_id
+		LEFT JOIN ic_role ir ON irp.ic_sys_role_id = ir.id
+		LIMIT #{start},#{limit}
+	</select>
+	<resultMap type="Permission" id="PermissionResultMap">
+		<id column="perm_id" property="id"/>
+		<result column="perm_name" property="name"/>
+		<result column="perm_descritpion" property="descritpion"/>
+		<result column="perm_url" property="url"/>
+		<result column="perm_parent_id" property="pid"/>
+		<collection property="roles" ofType="Role">
+			<id column="id" property="id"/>
+			<result column="name" property="name"/>
+		</collection>
+	</resultMap>
+	<select id="findNavPermissionCount" resultType="int">
+		SELECT count(perm_id) FROM ic_permission
+	</select>
+	<insert id="createNavPermission" parameterType="Permission" useGeneratedKeys="true" keyProperty="id" keyColumn="perm_id">
+		INSERT INTO ic_permission(perm_name,perm_descritpion,perm_url,perm_parent_id)
+		VALUES(#{name},#{descritpion},#{url},#{pid})
+	</insert>
+	
+	<insert id="insertRolePermission" parameterType="RolePermission">
+		INSERT INTO 
+		ic_role_permission(
+			ic_perm_id,
+			ic_sys_role_id
+		) VALUES(
+			#{permission.id},
+			#{role.id}
+		)
+	</insert>
+	
+	<select id="getNavPermission" parameterType="int" resultMap="PermissionResultMap">
+		SELECT
+			p.*, ir.*
+		FROM
+			ic_permission p
+		LEFT JOIN ic_role_permission irp ON p.perm_id = irp.ic_perm_id
+		LEFT JOIN ic_role ir ON irp.ic_sys_role_id = ir.id
+		WHERE p.perm_id = #{id}
+	</select>
+	
+	<delete id="delNavPermission" parameterType="int">
+		DELETE FROM ic_permission WHERE perm_id = #{id}
+	</delete>
+	
+	<delete id="delNavRolePermission" parameterType="int">
+		DELETE FROM ic_role_permission WHERE ic_perm_id = #{id}
+	</delete>
+	
+	<update id="updateNavPermission" parameterType="Permission">
+		UPDATE ic_permission
+        <set>
+            <if test="name != null">perm_name=#{name},</if>
+            <if test="descritpion != null">perm_descritpion=#{descritpion},</if>
+            <if test="url != null">perm_url=#{url},</if>
+            <if test="pid != null">perm_parent_id=#{pid}</if>
+        </set>
+        WHERE perm_id=#{id}
+	</update>
+</mapper>
